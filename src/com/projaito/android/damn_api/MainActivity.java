@@ -53,7 +53,9 @@ public class MainActivity extends Activity {
     protected void onPostExecute(JSONObject result) {
       AmazingListView list = (AmazingListView)findViewById(R.id.list);
       list.setPinnedHeaderView(LayoutInflater.from(MainActivity.this).inflate(R.layout.list_header, list, false));
-      list.setAdapter(new ApiSpecAdapter(MainActivity.this, result));
+      ApiSpecAdapter adapter = new ApiSpecAdapter(MainActivity.this, result);
+      list.setAdapter(adapter);
+      list.setOnItemClickListener(adapter);
     }
   }
 }

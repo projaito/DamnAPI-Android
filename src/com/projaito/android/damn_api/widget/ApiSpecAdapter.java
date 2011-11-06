@@ -5,36 +5,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.AdapterView;
 import android.util.Pair;
+import android.util.Log;
 import org.json.*;
 import java.util.List;
 import java.util.ArrayList;
 
 import com.projaito.android.damn_api.R;
 
-public class ApiSpecAdapter extends AmazingAdapter {
+public class ApiSpecAdapter extends AmazingAdapter implements AdapterView.OnItemClickListener {
   private static final String TAG = "ApiSpecAdapter";
 
   private Context mContext = null;
   private JSONObject mSpec = null;
-  private List<Pair<String, List<String>>> data = null;
+  private List<Pair<String, List<JSONObject>>> data = null;
 
   public ApiSpecAdapter(Context context, JSONObject spec) {
     mContext = context;
     mSpec = spec;
 
-    data = new ArrayList<Pair<String, List<String>>>();
+    data = new ArrayList<Pair<String, List<JSONObject>>>();
     try {
       JSONArray apiGroups = mSpec.getJSONArray("api_groups");
       for(int i=0; i < apiGroups.length(); i++) {
         JSONObject apiGroup = apiGroups.getJSONObject(i);
         JSONArray apis = apiGroup.getJSONArray("apis");
-        List apiNames = new ArrayList<String>();
+        List apiJSONs = new ArrayList<JSONObject>();
         for(int j=0; j < apis.length(); j++) {
           JSONObject api = apis.getJSONObject(j);
-          apiNames.add(api.getString("name"));
+          apiJSONs.add(api);
         }
-        data.add(new Pair<String, List<String>>(apiGroup.getString("name"), apiNames));
+        data.add(new Pair<String, List<JSONObject>>(apiGroup.getString("name"), apiJSONs));
       }
     } catch(JSONException e) {
       e.printStackTrace();
@@ -49,7 +51,7 @@ public class ApiSpecAdapter extends AmazingAdapter {
     return res;
   }
 
-  @Override public String getItem(int position) {
+  @Override public JSONObject getItem(int position) {
     int c = 0;
     for (int i = 0; i < data.size(); i++) {
       if (position >= c && position < c + data.get(i).second.size()) {
@@ -80,8 +82,15 @@ public class ApiSpecAdapter extends AmazingAdapter {
       res = LayoutInflater.from(mContext).inflate(R.layout.list_item, null);
     }
 
+    String apiName = null;
+    try {
+      apiName = getItem(position).getString("name");
+    } catch(JSONException e) {
+      e.printStackTrace();
+    }
+
     TextView name = (TextView)res.findViewById(R.id.name);
-    name.setText(getItem(position));
+    name.setText(apiName);
     return res;
   }
 
@@ -122,5 +131,9 @@ public class ApiSpecAdapter extends AmazingAdapter {
   }
 
   @Override protected void onNextPageRequested(int page) {
+  }
+
+  @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    Log.d(TAG, "============================= JSON: " + getItem(position).toString());
   }
 }
