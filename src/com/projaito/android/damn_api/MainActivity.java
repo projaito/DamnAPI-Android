@@ -1,10 +1,14 @@
 package com.projaito.android.damn_api;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.AdapterView;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +21,10 @@ import org.json.*;
 
 import com.projaito.android.damn_api.widget.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
+  private static String TAG = "MainActivity";
+  ApiSpecAdapter mAdapter = null;
+
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
@@ -54,8 +61,16 @@ public class MainActivity extends Activity {
       AmazingListView list = (AmazingListView)findViewById(R.id.list);
       list.setPinnedHeaderView(LayoutInflater.from(MainActivity.this).inflate(R.layout.list_header, list, false));
       ApiSpecAdapter adapter = new ApiSpecAdapter(MainActivity.this, result);
+      MainActivity.this.mAdapter = adapter;
       list.setAdapter(adapter);
-      list.setOnItemClickListener(adapter);
+      list.setOnItemClickListener(MainActivity.this);
     }
+  }
+
+  @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    Log.d(TAG, "============================= JSON: " + mAdapter.getItem(position).toString());
+    Intent intent = new Intent(this, ApiActivity.class);
+    intent.putExtra("apiJSON", mAdapter.getItem(position).toString());
+    startActivity(intent);
   }
 }

@@ -5,16 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.AdapterView;
 import android.util.Pair;
-import android.util.Log;
 import org.json.*;
 import java.util.List;
 import java.util.ArrayList;
 
 import com.projaito.android.damn_api.R;
 
-public class ApiSpecAdapter extends AmazingAdapter implements AdapterView.OnItemClickListener {
+public class ApiSpecAdapter extends AmazingAdapter {
   private static final String TAG = "ApiSpecAdapter";
 
   private Context mContext = null;
@@ -131,9 +129,5 @@ public class ApiSpecAdapter extends AmazingAdapter implements AdapterView.OnItem
   }
 
   @Override protected void onNextPageRequested(int page) {
-  }
-
-  @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    Log.d(TAG, "============================= JSON: " + getItem(position).toString());
   }
 }
